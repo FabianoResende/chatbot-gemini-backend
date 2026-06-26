@@ -4,7 +4,7 @@ import cors from 'cors';
 const app = express();
 
 // Configura o CORS
-app.use(cors(origin: 'https://fabianoresende.github.io')); // Isso libera acesso total para testes;
+app.use(cors()); // Isso libera acesso total para testes;
 
 app.use(express.json());
 
