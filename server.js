@@ -4,7 +4,7 @@ import cors from 'cors';
 const app = express();
 
 // Configura o CORS
-app.use(cors({ origin: 'https://fabianoresende.github.io' }));
+app.use(cors(origin: 'https://fabianoresende.github.io')); // Isso libera acesso total para testes;
 
 app.use(express.json());
 
@@ -22,3 +22,4 @@ app.post('/chat', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
+
