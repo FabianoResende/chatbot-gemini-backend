@@ -1,25 +1,42 @@
-import express from 'express';
-import cors from 'cors';
+import express from "express";
+import fetch from "node-fetch";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const app = express();
-
-// Configura o CORS
-app.use(cors()); // Isso libera acesso total para testes;
-
 app.use(express.json());
 
-// Rota de teste
-app.get('/', (req, res) => {
-    res.send('Servidor está rodando!');
-});
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
-// Rota do chat (exemplo estrutural)
-app.post('/chat', async (req, res) => {
+app.post("/chat", async (req, res) => {
     const { prompt } = req.body;
-    // Aqui você colocaria a lógica de chamada da API do Gemini
-    res.json({ answer: "Resposta do Gemini: Recebi seu prompt!" });
+
+    try {
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    contents: [
+                        {
+                            parts: [{ text: prompt }],
+                        },
+                    ],
+                }),
+            }
+        );
+
+        const data = await response.json();
+        const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text || "Sem resposta.";
+
+        res.json({ answer });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao conectar com a IA." });
+    }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
-
+app.listen(3000, () => console.log("Backend do chatbot rodando"));
